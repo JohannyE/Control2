@@ -1,38 +1,102 @@
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
+/* Estilos del encabezado */
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  padding: 20px;
+  border-bottom: 2px solid #61dafb;
+}
+
+/* Estilos del contenido */
+.content {
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+/* Estilos del campo de búsqueda */
+input[type="text"] {
+  padding: 10px;
+  font-size: 16px;
+  width: 300px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  margin-right: 20px; /* Agrega margen derecho */
+  margin-left: 20px; /* Agrega margen izquierdo */
+}
+
+/* Estilos de los botones */
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #61dafb;
   color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 100px;
 }
 
-.App-link {
-  color: #61dafb;
+/* Agrega margen derecho solo al primer botón */
+button:first-child {
+  margin-right: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Ajusta el margen derecho entre los botones */
+button:not(:last-child) {
+  margin-right: 10px; /* Ajusta el margen derecho entre los botones */
+}
+/* Estilos del botón de búsqueda */
+.search-button {
+  background-color: #61dafb;
+}
+
+/* Estilos del botón de ver favoritos */
+.favorites-button {
+  background-color: #f0c040;
+}
+
+/* Estilos de los mensajes de error */
+.error-message {
+  color: red;
+}
+
+/* Estilos de los resultados de búsqueda y favoritos */
+.result-container {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: left;
+  width: 70%;
+}
+
+/* Estilos del texto en los resultados */
+.result-container p {
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+/* Estilos del botón "Me gusta" */
+.add-favorite-button {
+  background-color: #f0c040;
+}
+
+/* Estilos del mensaje cuando no hay favoritos */
+.no-favorites-message {
+  font-style: italic;
+}
+.App-logo-small {
+  width: 1000px;
+  height: 100px;
 }

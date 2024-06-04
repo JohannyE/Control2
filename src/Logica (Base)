@@ -1,0 +1,118 @@
+const https = require('https');
+const readline = require('readline');
+
+// Variable para almacenar los favoritos
+let favorites = [];
+let searchResults = []; // Variable para almacenar los resultados de la búsqueda
+
+// Función para buscar facts
+function Logica(endpoint, newEndpoint = null) {
+  const url = newEndpoint ? newEndpoint : `https://api.chucknorris.io/jokes/search?query=${endpoint}`;
+
+  https.get(url, (resp) => {
+    let data = '';
+
+    // Recibir datos en fragmentos
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    // Toda la respuesta ha sido recibida
+    resp.on('end', () => {
+      try {
+        const result = JSON.parse(data).result;
+
+        // Verificar si result está definido y no vacío
+        if (result && result.length === 0) {
+          console.log('No se encontraron resultados para la búsqueda.');
+          promptNextAction(); // Permitir realizar un nuevo requerimiento
+          return;
+        }
+
+        // Mostrar cada numero con sus detalles
+        result.forEach((numero, index) => { // Cambio de fact a numero
+          console.log(`Numero ${index + 1}:`); // Cambio de Fact a Numero
+          console.log('Descripción:', numero.value);
+          console.log('Fecha de creación:', numero.created_at);
+          if (numero.categories.length > 0) {
+            console.log('Categorías:', numero.categories.join(', '));
+          }
+          console.log();
+        });
+
+        // Si se proporcionó un nuevo endpoint, guardar los resultados de la búsqueda
+        if (newEndpoint) {
+          searchResults = result;
+          promptNextAction();
+        } else {
+          // Guardar los resultados de la búsqueda original
+          searchResults = result;
+
+          // Preguntar si se quiere guardar un numero como favorito
+          promptSaveFavorite(result);
+        }
+      } catch (error) {
+        console.error('Error al procesar la respuesta de la API:', error.message);
+        console.log('Ha ocurrido un error al procesar la respuesta de la API. Intente nuevamente.');
+        promptSearch(); // Solicitar nuevamente el término de búsqueda
+      }
+    });
+
+  }).on("error", (err) => {
+    console.error("Error fetching data: " + err.message);
+    console.log('Ha ocurrido un error al realizar la solicitud. Intente nuevamente.');
+    promptSearch(); // Solicitar nuevamente el término de búsqueda
+  });
+}
+
+// Función para preguntar si se quiere guardar un numero como favorito
+function promptSaveFavorite(facts) {
+  rl.question('Ingrese el número del numero que quiere guardar como favorito, o presione Enter para omitir: ', (index) => {
+    if (index !== '') {
+      const factIndex = parseInt(index, 10);
+      if (!isNaN(factIndex) && factIndex >= 0 && factIndex < facts.length) {
+        favorites.push(facts[factIndex - 1]); // Restar 1 para obtener el índice correcto
+        console.log('Numero guardado en favoritos.');
+      } else {
+        console.log('Índice no válido.');
+      }
+    }
+    promptNextAction();
+  });
+}
+
+// Función para manejar acciones del usuario
+function promptNextAction() {
+  rl.question('¿Qué quieres hacer a continuación? (buscar/ver favoritos/nueva búsqueda/salir): ', (action) => {
+    if (action === 'buscar') {
+      promptSearch();
+    } else if (action === 'ver favoritos') {
+      console.log('Favoritos:', favorites);
+      promptNextAction();
+    } else if (action === 'nueva búsqueda') {
+      promptSearch(); // Realizar una nueva búsqueda
+    } else if (action === 'salir') {
+      rl.close();
+    } else {
+      console.log('Acción no válida.');
+      promptNextAction();
+    }
+  });
+}
+
+// Crear interfaz para la entrada del usuario
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Función para pedir al usuario que ingrese el término de búsqueda
+function promptSearch() {
+  rl.question('Ingrese el término de búsqueda para Chuck Norris API (ej. Francisco): ', (endpoint) => {
+    Logica(endpoint);
+  });
+}
+
+// Iniciar el programa
+promptSearch();
+
